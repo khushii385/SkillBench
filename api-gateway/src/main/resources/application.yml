@@ -1,0 +1,30 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      # Agar kisi service ne bhi CORS header laga diya to duplicate nahi jaayega
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_FIRST
+
+      routes:
+        - id: auth-service
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/auth/**
+
+        - id: project-service
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/projects/**
+
+        - id: escrow-service
+          uri: http://localhost:8083
+          predicates:
+            - Path=/api/escrows/**
+
+jwt:
+  secret: ${JWT_SECRET:SkillBenchSuperSecretKeyForJwtAuthentication2026SecureKeyXYZ!@#}
